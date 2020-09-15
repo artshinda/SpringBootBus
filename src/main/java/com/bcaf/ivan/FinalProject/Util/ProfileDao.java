@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ProfileDao extends JpaRepository<User, String> {
-    @Query(nativeQuery = true, value = "SELECT * FROM tb_user")
+    @Query(nativeQuery = true, value = "SELECT ta.* FROM tb_user ta WHERE ta.id =:id")
     User findProfileByUserId(@Param("id") String id);
 }

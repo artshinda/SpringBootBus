@@ -55,9 +55,9 @@ public class IndexController {
     @RequestMapping({"/profile"})
     public String viewProfile(HttpServletRequest request, Model model) {
         HttpSession session = request.getSession(true);
-        String agencyId = (String) session.getAttribute("agencyId");
+        String userId = (String) session.getAttribute("connectedUser");
 
-        User user = profileDao.findProfileByUserId(agencyId);
+        User user = profileDao.findProfileByUserId(userId);
         model.addAttribute("profile",user);
         return "profileView";
     }

@@ -89,6 +89,23 @@ public class BusApiController {
         return rs;
     }
 
+    @PostMapping("/addBusAngular")
+    public String addBusAngular(@RequestBody Bus Bus) throws JsonProcessingException {
+        Bus newBus = new Bus();
+        newBus.setAgencyId(Bus.getAgencyId());
+        System.out.println(Bus.getCapacity());
+        newBus.setCapacity(Bus.getCapacity());
+////        System.out.println(bus.getCapacity());
+        newBus.setCode(Bus.getCode());
+        newBus.setMake(Bus.getMake());
+        newBus.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+        busDao.save(newBus);
+
+        ObjectMapper Obj = new ObjectMapper();
+        String rs = Obj.writeValueAsString(busDao.findAll());
+        return rs;
+    }
+
     @PostMapping("/deleteBus")
     public String deleteBus(@RequestBody List<Bus> listBus) throws JsonProcessingException {
         for (Bus b : listBus) {
@@ -96,6 +113,14 @@ public class BusApiController {
         }
         ObjectMapper Obj = new ObjectMapper();
         String rs = Obj.writeValueAsString(listBus);
+        return rs;
+    }
+
+    @PostMapping("/deleteBus-angular")
+    public String deleteBus(@RequestBody String id) throws JsonProcessingException {
+        busDao.deleteById(id);
+        ObjectMapper Obj = new ObjectMapper();
+        String rs = Obj.writeValueAsString(busDao.findAll());
         return rs;
     }
 }

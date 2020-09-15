@@ -84,14 +84,14 @@ public class UserApiController {
     }
 
     @PostMapping("/login")
-    public String login(String email, String password) throws JsonProcessingException{
+    public String login(String email, String password) throws JsonProcessingException {
         User user = userDao.findEmailValidation(email);
         Agency agency = agencyDao.findAgencyByUserId(user.getId());
 
         String encoded = pass().encode(password);
         System.out.println(encoded);
 
-        if (pass().matches(password, user.getPassword())){
+        if (pass().matches(password, user.getPassword())) {
             String JWT = new CreateJWT()
                     .buildJWT9(user, agency.getId());
             ObjectMapper mapper = new ObjectMapper();
@@ -100,13 +100,13 @@ public class UserApiController {
             String json = mapper.writerWithDefaultPrettyPrinter()
                     .writeValueAsString(userResponse);
             return json;
-        }else{
+        } else {
             return "error";
         }
     }
 
     @GetMapping("/getUserId")
-    public String getUser(@RequestParam(name="id") String userId) throws JsonProcessingException {
+    public String getUser(@RequestParam(name = "id") String userId) throws JsonProcessingException {
 //        System.out.println("agencyId" + userId);
         User user = userDao.findById(userId).get();
 //        System.out.println( "agencyId" + user.getEmail());
@@ -120,7 +120,7 @@ public class UserApiController {
         HttpSession session = request.getSession(true);
         String userId = (String) session.getAttribute("connectedUser");
 
-        User userDT =  userDao.findById(userId).get();
+        User userDT = userDao.findById(userId).get();
         userDT.setFirstName(user.getFirstName());
         userDT.setLastName(user.getLastName());
         userDT.setMobileNumber(user.getMobileNumber());
@@ -133,4 +133,21 @@ public class UserApiController {
         String rs = Obj.writeValueAsString(userDT);
         return rs;
     }
+
+    @PostMapping("/updateProfileAngular")
+    public String updateProfileAngular(@RequestBody User user) throws JsonProcessingException {
+        User userDB = userDao.findById(user.getId()).get();
+        System.out.println(user.getId());
+        userDB.setFirstName(user.getFirstName());
+        userDB.setLastName(user.getLastName());
+        userDB.setEmail(user.getEmail());
+        userDB.setPassword(pass().encode(user.getPassword()));
+        System.out.println(pass().encode(user.getPassword()));
+        userDB.setMobileNumber(user.getMobileNumber());
+        userDao.save(userDB);
+        ObjectMapper Obj = new ObjectMapper();
+        String rs = Obj.writeValueAsString(user);
+        return rs;
+    }
 }
+
